@@ -22,7 +22,8 @@ export const BATTLEGROUND_WAIT_SKIPPER = std.CreatureTemplates
     ])
     .Gossip.modNew(()=>{})
     .InlineScripts.OnGossipHello((creature,player)=>{
-        if(player.GetMap().ToBG().GetStartDelayTime() == 0)
+        const bg = player.GetMap().ToBG();
+        if(bg && bg.GetStartDelayTime() == 0)
         {
             player.GossipSendTextMenu(
                 creature,`The battleground has already started!`
@@ -35,7 +36,8 @@ export const BATTLEGROUND_WAIT_SKIPPER = std.CreatureTemplates
         }
     })
     .InlineScripts.OnGossipSelect((creature,player)=>{
-        if(player.GetMap().ToBG().GetStartDelayTime() > 5000) {
-            player.GetMap().ToBG().SetStartDelayTime(5000);
+        const bg = player.GetMap().ToBG();
+        if(bg && bg.GetStartDelayTime() > 5000) {
+            bg.SetStartDelayTime(5000);
         }
     })
