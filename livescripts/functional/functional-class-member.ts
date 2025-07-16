@@ -1,15 +1,15 @@
 export class MyFunctionalClass extends TSClass {
-    fp: (cls: MyFunctionalClass, player: TSPlayer) => void;
+    fp: (this: any, cls: MyFunctionalClass, player: TSPlayer) => void;
     value: uint32;
 
-    constructor(fp: (cls: MyFunctionalClass, player: TSPlayer)=>void, value: uint32) {
+    constructor(fp: (this: any, cls: MyFunctionalClass, player: TSPlayer)=>void, value: uint32) {
         super();
         this.fp = fp;
         this.value = value;
     }
 
     call(player: TSPlayer) {
-        if(this.fp)
+        if(this.fp !== undefined)
         {
             this.fp(this,player);
         }

@@ -44,19 +44,21 @@ export function RegisterBattlegroundEvents(events: TSEvents) {
         bg.AddTimer(60000,TimerLoops.INDEFINITE,(owner,timer)=>{
             let data = SlimePitData.get(owner);
             data.timer--;
-            owner.ToBG().UpdateWorldState(SLIME_TIMER,data.timer);
+            let ownerBG = owner.ToBG();
+            if(!ownerBG) return;
+            ownerBG.UpdateWorldState(SLIME_TIMER,data.timer);
             if(data.timer > 0) return;
 
             // time's up, end battleground
             if(data.hordeScore > data.allianceScore) {
                 owner.GetPlayers().forEach(x=>x.SendBroadcastMessage(`Horde wins!`))
-                owner.ToBG().EndBG(TeamId.HORDE);
+                ownerBG.EndBG(TeamId.HORDE);
             } else if(data.hordeScore < data.allianceScore) {
                 owner.GetPlayers().forEach(x=>x.SendBroadcastMessage(`Alliance wins!`))
-                owner.ToBG().EndBG(TeamId.ALLIANCE);
+                ownerBG.EndBG(TeamId.ALLIANCE);
             } else {
                 owner.GetPlayers().forEach(x=>x.SendBroadcastMessage(`It's a draw!`))
-                owner.ToBG().EndBG(TeamId.NEUTRAL);
+                ownerBG.EndBG(TeamId.NEUTRAL);
             }
         })
     })
@@ -73,10 +75,14 @@ export function RegisterBattlegroundEvents(events: TSEvents) {
         if(creature.GetMapID() !== MAP || !creature.GetMap().IsBG()) return;
 
         // Check for non-player killer
-        let owner = killer.GetEffectiveOwner().ToPlayer()
-        if(owner.IsNull()) return;
+        if(!killer) return;
+        let effectiveOwner = killer.GetEffectiveOwner();
+        if(!effectiveOwner) return;
+        let owner = effectiveOwner.ToPlayer()
+        if(!owner || owner.IsNull()) return;
 
         let map = creature.GetMap().ToBG()
+        if(!map) return;
         let data = SlimePitData.get(map);
         let team = owner.GetTeam()
 

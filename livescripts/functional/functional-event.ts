@@ -1,7 +1,7 @@
 class EventClass extends TSClass
 {
     counter: number = 0
-    mutex: TSMutex = CreateMutex()
+    mutex: TSMutex = CreateMutexLock()
     constructor(events: TSEvents)
     {
         super();
