@@ -1,24 +1,29 @@
 export class MyFunctionalClass extends TSClass {
-    fp: (this: MyFunctionalClass, cls: MyFunctionalClass, player: TSPlayer) => void;
+    // Store as non-nullable but initialize to a no-op function
+    fp: (cls: MyFunctionalClass, player: TSPlayer) => void = () => {};
     value: uint32;
+    private initialized: boolean = false;
 
-    constructor(fp: (this: MyFunctionalClass, cls: MyFunctionalClass, player: TSPlayer)=>void, value: uint32) {
+    constructor(value: uint32) {
         super();
-        this.fp = fp;
         this.value = value;
+        // Set the actual function
+        this.fp = (cls, player) => {
+            player.SendBroadcastMessage(`Hello from Functional class ${cls.value++}`);
+        };
+        this.initialized = true;
     }
 
     call(player: TSPlayer) {
-        if(this.fp !== undefined)
+        // Check if initialized before calling
+        if(this.initialized)
         {
-            this.fp(this,player);
+            this.fp(this, player);
         }
     }
 }
 
-let myFunctionalInstance = new MyFunctionalClass(
-    (cls,player)=>player.SendBroadcastMessage(`Hello from Functional class ${cls.value++}`),10
-)
+let myFunctionalInstance = new MyFunctionalClass(10)
 
 export function CallFunctionalClass(player: TSPlayer) {
     myFunctionalInstance.call(player);
